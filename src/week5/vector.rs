@@ -118,6 +118,14 @@ impl Div<f32> for Vector {
     }
 }
 
+impl Neg for Vector {
+    type Output = Vector;
+
+    fn neg(self) -> Self::Output {
+        self * -1.0
+    }
+}
+
 pub mod unit {
     pub mod two_d {
         use crate::week5::vector::Vector;
