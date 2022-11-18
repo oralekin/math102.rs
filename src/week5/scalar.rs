@@ -1,7 +1,7 @@
 use std::ops::*;
 
 #[derive(Debug, PartialEq, PartialOrd)]
-pub struct Scalar(pub f32);
+pub struct Scalar(pub f64);
 
 impl Add for Scalar {
     type Output = Self;
@@ -11,15 +11,15 @@ impl Add for Scalar {
     }
 }
 
-impl Add<f32> for Scalar {
+impl Add<f64> for Scalar {
     type Output = Self;
 
-    fn add(self, rhs: f32) -> Self::Output {
+    fn add(self, rhs: f64) -> Self::Output {
         Scalar(self.0 + rhs)
     }
 }
 
-impl Add<Scalar> for f32 {
+impl Add<Scalar> for f64 {
     type Output = Scalar;
 
     fn add(self, rhs: Scalar) -> Self::Output {
@@ -35,15 +35,15 @@ impl Sub for Scalar {
     }
 }
 
-impl Sub<f32> for Scalar {
+impl Sub<f64> for Scalar {
     type Output = Self;
 
-    fn sub(self, rhs: f32) -> Self::Output {
+    fn sub(self, rhs: f64) -> Self::Output {
         Scalar(self.0 - rhs)
     }
 }
 
-impl Sub<Scalar> for f32 {
+impl Sub<Scalar> for f64 {
     type Output = Scalar;
 
     fn sub(self, rhs: Scalar) -> Self::Output {
@@ -59,15 +59,15 @@ impl Mul for Scalar {
     }
 }
 
-impl Mul<f32> for Scalar {
+impl Mul<f64> for Scalar {
     type Output = Self;
 
-    fn mul(self, rhs: f32) -> Self::Output {
+    fn mul(self, rhs: f64) -> Self::Output {
         Scalar(self.0 * rhs)
     }
 }
 
-impl Mul<Scalar> for f32 {
+impl Mul<Scalar> for f64 {
     type Output = Scalar;
 
     fn mul(self, rhs: Scalar) -> Self::Output {
@@ -83,15 +83,15 @@ impl Div for Scalar {
     }
 }
 
-impl Div<f32> for Scalar {
+impl Div<f64> for Scalar {
     type Output = Self;
 
-    fn div(self, rhs: f32) -> Self::Output {
+    fn div(self, rhs: f64) -> Self::Output {
         Scalar(self.0 / rhs)
     }
 }
 
-impl Div<Scalar> for f32 {
+impl Div<Scalar> for f64 {
     type Output = Scalar;
 
     fn div(self, rhs: Scalar) -> Self::Output {

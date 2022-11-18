@@ -3,8 +3,7 @@ pub mod dot;
 
 #[cfg(test)]
 mod tests {
-    use crate::week5::{vector::Vector, scalar::Scalar};
-
+    use crate::week5::{scalar::Scalar, vector::Vector};
 
     #[test]
     fn q1a() {
@@ -19,7 +18,7 @@ mod tests {
         let u = Vector(vec![-2.0, 1.0, -2.0]);
         let v = Vector(vec![1.0, 2.0, 1.0]);
 
-        assert_eq!((u + (v * 3.0)).magnitude(), Scalar(51.0_f32.sqrt()));
+        assert_eq!((u + (v * 3.0)).magnitude(), Scalar(51.0_f64.sqrt()));
     }
 
     #[test]
@@ -27,7 +26,7 @@ mod tests {
         let v = Vector(vec![2.0, -1.0, 3.0]);
         let u = v.unit_in_direction();
 
-        assert_eq!(v / 14.0_f32.sqrt(), u);
+        assert_eq!(v / 14.0_f64.sqrt(), u);
     }
 
     #[test]

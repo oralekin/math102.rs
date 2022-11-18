@@ -3,11 +3,11 @@ use std::{ops::*, vec};
 use crate::week5::scalar::Scalar;
 
 #[derive(Debug, PartialEq)]
-pub struct Vector(pub vec::Vec<f32>);
+pub struct Vector(pub vec::Vec<f64>);
 
 impl Vector {
     pub fn magnitude_squared(&self) -> Scalar {
-        Scalar(self.0.iter().map(|x| x * x).sum::<f32>())
+        Scalar(self.0.iter().map(|x| x * x).sum::<f64>())
     }
 
     pub fn magnitude(&self) -> Scalar {
@@ -94,10 +94,10 @@ impl Mul<Scalar> for Vector {
     }
 }
 
-impl Mul<f32> for Vector {
+impl Mul<f64> for Vector {
     type Output = Vector;
 
-    fn mul(self, rhs: f32) -> Self::Output {
+    fn mul(self, rhs: f64) -> Self::Output {
         self.multiplied(Scalar(rhs))
     }
 }
@@ -110,10 +110,10 @@ impl Div<Scalar> for Vector {
     }
 }
 
-impl Div<f32> for Vector {
+impl Div<f64> for Vector {
     type Output = Vector;
 
-    fn div(self, rhs: f32) -> Self::Output {
+    fn div(self, rhs: f64) -> Self::Output {
         self * (1.0 / rhs)
     }
 }
@@ -130,14 +130,24 @@ pub mod unit {
     pub mod two_d {
         use crate::week5::vector::Vector;
 
-        pub fn i() -> Vector { Vector(vec![1.0, 0.0]) }
-        pub fn j() -> Vector { Vector(vec![0.0, 1.0]) }
+        pub fn i() -> Vector {
+            Vector(vec![1.0, 0.0])
+        }
+        pub fn j() -> Vector {
+            Vector(vec![0.0, 1.0])
+        }
     }
     pub mod three_d {
         use crate::week5::vector::Vector;
 
-        pub fn i() -> Vector { Vector(vec![1.0, 0.0, 0.0]) }
-        pub fn j() -> Vector { Vector(vec![0.0, 1.0, 0.0]) }
-        pub fn k() -> Vector { Vector(vec![0.0, 0.0, 1.0]) }
+        pub fn i() -> Vector {
+            Vector(vec![1.0, 0.0, 0.0])
+        }
+        pub fn j() -> Vector {
+            Vector(vec![0.0, 1.0, 0.0])
+        }
+        pub fn k() -> Vector {
+            Vector(vec![0.0, 0.0, 1.0])
+        }
     }
 }

@@ -1,4 +1,4 @@
-use std::ops::{Shr, Shl, Mul};
+use std::ops::{Mul, Shl, Shr};
 
 use crate::week5::{scalar::Scalar, vector::Vector};
 
@@ -26,7 +26,6 @@ impl Vector {
                 .acos(),
         )
     }
-
 }
 
 // dot product
@@ -55,4 +54,3 @@ impl Shr<Vector> for Vector {
         self.projected_on(&rhs)
     }
 }
-

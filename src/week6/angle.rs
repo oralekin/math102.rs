@@ -1,4 +1,4 @@
-use std::f32::consts::PI;
+use std::f64::consts::PI;
 
 pub trait Angle: Into<Degrees> + Into<Radians> + Copy {
     fn to_unit_circle(self) -> Self;
@@ -8,7 +8,7 @@ pub trait Angle: Into<Degrees> + Into<Radians> + Copy {
 }
 
 #[derive(Clone, Copy, Debug)]
-pub struct Radians(pub f32);
+pub struct Radians(pub f64);
 
 impl From<Degrees> for Radians {
     fn from(deg: Degrees) -> Radians {
@@ -31,7 +31,7 @@ impl Angle for Radians {
 }
 
 #[derive(Clone, Copy, Debug)]
-pub struct Degrees(pub f32);
+pub struct Degrees(pub f64);
 
 impl From<Radians> for Degrees {
     fn from(deg: Radians) -> Degrees {
@@ -58,7 +58,7 @@ impl Angle for Degrees {
 
 #[cfg(test)]
 mod tests {
-    use std::f32::consts::PI;
+    use std::f64::consts::PI;
 
     use super::{Angle, Degrees, Radians};
 
