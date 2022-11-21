@@ -1,6 +1,6 @@
 use std::ops::*;
 
-#[derive(Debug, PartialEq, PartialOrd)]
+#[derive(Debug, Clone, PartialEq, PartialOrd)]
 pub struct Scalar(pub f64);
 
 impl Add for Scalar {

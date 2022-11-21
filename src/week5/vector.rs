@@ -2,7 +2,7 @@ use std::{ops::*, vec};
 
 use crate::week5::scalar::Scalar;
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct Vector(pub vec::Vec<f64>);
 
 impl Vector {
