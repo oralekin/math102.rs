@@ -1,5 +1,5 @@
 pub mod cross;
-mod determinant;
+pub mod determinant;
 pub mod plane;
 pub mod point;
 
