@@ -1,4 +1,6 @@
-use std::fmt::Debug;
+use std::f64::EPSILON;
+use std::f64::consts::E;
+use std::fmt::{Debug, Display};
 use std::ops::{Add, BitXor, Div, Mul, Sub};
 
 use crate::week5::scalar::Scalar;
@@ -138,6 +140,22 @@ impl Expression {
     }
 }
 
+impl Display for Expression {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Expression::Add(lhs, rhs) => write!(f, "({} + {})", lhs, rhs),
+            Expression::Subtract(lhs, rhs) => write!(f, "({} - {})", lhs, rhs),
+            Expression::Multiply(lhs, rhs) => write!(f, "({} * {})", lhs, rhs),
+            Expression::Divide(lhs, rhs) => write!(f, "({} - {})", lhs, rhs),
+            Expression::Exponentiate(base, power) => write!(f, "({} ^ {})", base, power),
+            Expression::Logarithm(box Expression::Constant(Scalar (e)), inside) if E-e <= EPSILON => write!(f, "ln({})", inside),
+            Expression::Logarithm(base, inside) => write!(f, "log_({})({})", base, inside),
+            Expression::Variable(name) => write!(f, "{}", name),
+            Expression::Constant(value) => write!(f, "{}", value.0),
+        }
+    }
+}
+
 #[cfg(test)]
 mod test {
 
@@ -183,4 +201,17 @@ mod test {
 
         assert_eq!(((x * zero) + seven1).simplified(), seven2);
     }
+
+    #[test]
+    fn display() {
+        let ex: Expression = 
+            Expression::Constant(Scalar(1.)) 
+            / (
+                Expression::Constant(Scalar(1.)) - (
+                    Expression::Variable('x') ^ Expression::Constant(Scalar(2.))
+                )
+            );
+        println!("f(x)={}", ex);
+    }
+
 }
