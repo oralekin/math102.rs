@@ -31,7 +31,7 @@ impl Differentiate for Expression {
                       ))
                     * base.differentiate(wrt)?,
 
-                Expression::Logaritm(base, inside) => (Expression::Constant(Scalar(1.)) / *inside.clone()) * base.differentiate(wrt)?,
+                Expression::Logarithm(base, inside) => (Expression::Constant(Scalar(1.)) / *inside.clone()) * base.differentiate(wrt)?,
                 Expression::Variable(name) => {
                     if wrt_name == name {
                         Expression::Constant(Scalar(1.))

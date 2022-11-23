@@ -10,7 +10,7 @@ pub enum Expression {
     Multiply(Box<Expression>, Box<Expression>),
     Divide(Box<Expression>, Box<Expression>),
     Exponentiate(Box<Expression>, Box<Expression>),
-    Logaritm(Box<Expression>, Box<Expression>),
+    Logarithm(Box<Expression>, Box<Expression>),
     Variable(char),
     Constant(Scalar),
 }
@@ -68,7 +68,7 @@ impl PartialEq for Expression {
             }
             (Self::Divide(l0, l1), Self::Divide(r0, r1)) => l0 == r0 && l1 == r1,
             (Self::Exponentiate(l0, l1), Self::Exponentiate(r0, r1)) => l0 == r0 && l1 == r1,
-            (Self::Logaritm(l0, l1), Self::Logaritm(r0, r1)) => l0 == r0 && l1 == r1,
+            (Self::Logarithm(l0, l1), Self::Logarithm(r0, r1)) => l0 == r0 && l1 == r1,
             (Self::Variable(l0), Self::Variable(r0)) => l0 == r0,
             (Self::Constant(l0), Self::Constant(r0)) => l0 == r0,
             (_, _) => false,
@@ -85,8 +85,8 @@ impl Expression {
                 Expression::Multiply(lhs, rhs) => lhs.simplified() * rhs.simplified(),
                 Expression::Divide(lhs, rhs) => lhs.simplified() / rhs.simplified(),
                 Expression::Exponentiate(lhs, rhs) => lhs.simplified() ^ rhs.simplified(),
-                Expression::Logaritm(lhs, rhs) => {
-                    Expression::Logaritm(Box::new(lhs.simplified()), Box::new(rhs.simplified()))
+                Expression::Logarithm(lhs, rhs) => {
+                    Expression::Logarithm(Box::new(lhs.simplified()), Box::new(rhs.simplified()))
                 }
                 other => other.clone(),
             }
@@ -132,7 +132,7 @@ impl Expression {
 
             // Expression::Divide(_, _) => todo!(),
             // Expression::Exponentiate(_, _) => todo!(),
-            // Expression::Logaritm(_, _) => todo!(),
+            // Expression::Logarithm(_, _) => todo!(),
             other => other,
         }
     }
