@@ -5,6 +5,14 @@ use std::ops::{Add, BitXor, Div, Mul, Sub};
 
 use crate::week5::scalar::Scalar;
 
+#[derive(Clone, Debug)]
+pub struct DerivableFunction(pub String, pub fn(Expression) -> Expression);
+impl PartialEq for DerivableFunction {
+    fn eq(&self, other: &Self) -> bool {
+        self.0 == other.0
+    }
+}
+
 #[derive(Debug, Clone)]
 pub enum Expression {
     Add(Box<Expression>, Box<Expression>),
@@ -15,6 +23,7 @@ pub enum Expression {
     Logarithm(Box<Expression>, Box<Expression>),
     Variable(char),
     Constant(Scalar),
+    DerivableFunctionExpression(DerivableFunction, Box<Expression>),
 }
 
 impl Add for Expression {
@@ -73,6 +82,10 @@ impl PartialEq for Expression {
             (Self::Logarithm(l0, l1), Self::Logarithm(r0, r1)) => l0 == r0 && l1 == r1,
             (Self::Variable(l0), Self::Variable(r0)) => l0 == r0,
             (Self::Constant(l0), Self::Constant(r0)) => l0 == r0,
+            (
+                Self::DerivableFunctionExpression(fun1, inside1),
+                Self::DerivableFunctionExpression(fun2, inside2),
+            ) => fun1 == fun2 && inside1 == inside2,
             (_, _) => false,
         }
     }
@@ -89,6 +102,12 @@ impl Expression {
                 Expression::Exponentiate(lhs, rhs) => lhs.simplified() ^ rhs.simplified(),
                 Expression::Logarithm(lhs, rhs) => {
                     Expression::Logarithm(Box::new(lhs.simplified()), Box::new(rhs.simplified()))
+                }
+                Expression::DerivableFunctionExpression(name, inside) => {
+                    Expression::DerivableFunctionExpression(
+                        name.clone(),
+                        Box::new(inside.simplified()),
+                    )
                 }
                 other => other.clone(),
             }
@@ -152,7 +171,37 @@ impl Display for Expression {
             Expression::Logarithm(base, inside) => write!(f, "log_({})({})", base, inside),
             Expression::Variable(name) => write!(f, "{}", name),
             Expression::Constant(value) => write!(f, "{}", value.0),
+            Expression::DerivableFunctionExpression(DerivableFunction(name, _), inside) => {
+                write!(f, "{}({})", name, inside)
+            }
         }
+    }
+}
+
+pub mod functions {
+    use crate::week5::scalar::Scalar;
+
+    use super::{DerivableFunction, Expression};
+
+    pub fn sin(inside: &Expression) -> Expression {
+        Expression::DerivableFunctionExpression(
+            DerivableFunction("sin".to_string(), |inside| {
+                    cos(&inside)
+            }),
+            Box::new(inside.clone()),
+        )
+    }
+
+    pub fn cos(inside: &Expression) -> Expression {
+        Expression::DerivableFunctionExpression(
+            DerivableFunction("cos".to_string(), |inside| {
+                Expression::Multiply(
+                    Box::new(Expression::Constant(Scalar(-1.))),
+                    Box::new(sin(&inside)),
+                )
+            }),
+            Box::new(inside.clone()),
+        )
     }
 }
 
@@ -214,4 +263,12 @@ mod test {
         println!("f(x)={}", ex);
     }
 
+    #[test]
+    fn sin() {
+        let ex: Expression = Expression::Constant(Scalar(1.))
+            / (Expression::Constant(Scalar(1.))
+                - (Expression::Variable('x') ^ Expression::Constant(Scalar(2.))));
+
+        println!("f(x)={}", super::functions::sin(&ex));
+    }
 }
