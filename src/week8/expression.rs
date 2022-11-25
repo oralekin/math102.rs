@@ -150,8 +150,32 @@ impl Expression {
                 box Expression::Constant(Scalar(rhs)),
             ) => Expression::Constant(Scalar(lhs * rhs)),
             // Expression::Multiply(_, _) => todo!(),
+            Expression::Divide(box Expression::Constant(Scalar(one)), other)
+            | Expression::Divide(other, box Expression::Constant(Scalar(one)))
+                if (1. - one).abs() <= f64::EPSILON =>
+            {
+                *other
+            }
 
+            Expression::Divide(
+                box Expression::Constant(Scalar(lhs)),
+                box Expression::Constant(Scalar(rhs)),
+            ) => Expression::Constant(Scalar(lhs / rhs)),
             // Expression::Divide(_, _) => todo!(),
+            Expression::Exponentiate(box Expression::Constant(Scalar(one)), other)
+            | Expression::Exponentiate(other, box Expression::Constant(Scalar(one)))
+                if (1. - one).abs() <= f64::EPSILON =>
+            {
+                *other
+            }
+
+            Expression::Exponentiate(box Expression::Constant(Scalar(zero)), _)
+            | Expression::Exponentiate(_, box Expression::Constant(Scalar(zero)))
+                if zero.abs() <= f64::EPSILON =>
+            {
+                Expression::Constant(Scalar(1.))
+            }
+
             // Expression::Exponentiate(_, _) => todo!(),
             // Expression::Logarithm(_, _) => todo!(),
             other => other,
@@ -164,10 +188,20 @@ impl Display for Expression {
         match self {
             Expression::Add(lhs, rhs) => write!(f, "({} + {})", lhs, rhs),
             Expression::Subtract(lhs, rhs) => write!(f, "({} - {})", lhs, rhs),
+            Expression::Multiply(box Self::Constant(Scalar(neg_one)), other)
+            | Expression::Multiply(other, box Self::Constant(Scalar(neg_one)))
+                if (neg_one + 1.).abs() <= EPSILON =>
+            {
+                write!(f, "-({})", other)
+            }
             Expression::Multiply(lhs, rhs) => write!(f, "({} * {})", lhs, rhs),
             Expression::Divide(lhs, rhs) => write!(f, "({} / {})", lhs, rhs),
             Expression::Exponentiate(base, power) => write!(f, "({} ^ {})", base, power),
-            Expression::Logarithm(box Expression::Constant(Scalar (e)), inside) if E-e <= EPSILON => write!(f, "ln({})", inside),
+            Expression::Logarithm(box Expression::Constant(Scalar(e)), inside)
+                if E - e <= EPSILON =>
+            {
+                write!(f, "ln({})", inside)
+            }
             Expression::Logarithm(base, inside) => write!(f, "log_({})({})", base, inside),
             Expression::Variable(name) => write!(f, "{}", name),
             Expression::Constant(value) => write!(f, "{}", value.0),
