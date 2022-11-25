@@ -149,8 +149,7 @@ impl Expression {
                 box Expression::Constant(Scalar(rhs)),
             ) => Expression::Constant(Scalar(lhs * rhs)),
             // Expression::Multiply(_, _) => todo!(),
-            Expression::Divide(box Expression::Constant(Scalar(one)), other)
-            | Expression::Divide(other, box Expression::Constant(Scalar(one)))
+            Expression::Divide(other, box Expression::Constant(Scalar(one)))
                 if (1. - one).abs() <= f64::EPSILON =>
             {
                 *other
