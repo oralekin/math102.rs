@@ -146,7 +146,7 @@ impl Display for Expression {
             Expression::Add(lhs, rhs) => write!(f, "({} + {})", lhs, rhs),
             Expression::Subtract(lhs, rhs) => write!(f, "({} - {})", lhs, rhs),
             Expression::Multiply(lhs, rhs) => write!(f, "({} * {})", lhs, rhs),
-            Expression::Divide(lhs, rhs) => write!(f, "({} - {})", lhs, rhs),
+            Expression::Divide(lhs, rhs) => write!(f, "({} / {})", lhs, rhs),
             Expression::Exponentiate(base, power) => write!(f, "({} ^ {})", base, power),
             Expression::Logarithm(box Expression::Constant(Scalar (e)), inside) if E-e <= EPSILON => write!(f, "ln({})", inside),
             Expression::Logarithm(base, inside) => write!(f, "log_({})({})", base, inside),
