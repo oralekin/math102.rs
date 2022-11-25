@@ -8,7 +8,14 @@ pub fn cross(vectors: Vec<vector::Vector>) -> Value {
     let mut matrix: Vec<Value> = vec![];
 
     matrix.append(&mut units(vectors.len() + 1));
-    matrix.append(&mut vectors.clone().into_iter().flat_map(|v| v.0).map(|v| Value::Scalar(Scalar(v))).collect());
+    matrix.append(
+        &mut vectors
+            .clone()
+            .into_iter()
+            .flat_map(|v| v.0)
+            .map(|v| Value::Scalar(Scalar(v)))
+            .collect(),
+    );
 
     determinant(matrix)
 }
@@ -36,7 +43,7 @@ impl Add<Value> for Value {
         match self {
             Value::Vector(inner) => match rhs {
                 Value::Vector(rhs_inner) => Value::Vector(inner + rhs_inner),
-                Value::Scalar(_) => panic!(), 
+                Value::Scalar(_) => panic!(),
             },
             Value::Scalar(inner) => match rhs {
                 Value::Scalar(rhs_inner) => Value::Scalar(inner + rhs_inner),
@@ -53,7 +60,7 @@ impl Sub<Value> for Value {
         match self {
             Value::Vector(inner) => match rhs {
                 Value::Vector(rhs_inner) => Value::Vector(inner - rhs_inner),
-                Value::Scalar(_) => panic!(), 
+                Value::Scalar(_) => panic!(),
             },
             Value::Scalar(inner) => match rhs {
                 Value::Scalar(rhs_inner) => Value::Scalar(inner - rhs_inner),
@@ -70,7 +77,7 @@ impl Mul<Value> for Value {
         match self {
             Value::Vector(inner) => match rhs {
                 Value::Vector(rhs_inner) => Value::Scalar(inner * rhs_inner),
-                Value::Scalar(rhs_inner) => Value::Vector(inner * rhs_inner), 
+                Value::Scalar(rhs_inner) => Value::Vector(inner * rhs_inner),
             },
             Value::Scalar(inner) => match rhs {
                 Value::Scalar(rhs_inner) => Value::Scalar(inner * rhs_inner),
@@ -82,7 +89,6 @@ impl Mul<Value> for Value {
 
 pub type SquareMatrix = Vec<Value>;
 
-
 pub fn determinant(matrix: SquareMatrix) -> Value {
     println!("{:?}", matrix);
 
@@ -91,42 +97,45 @@ pub fn determinant(matrix: SquareMatrix) -> Value {
     } else {
         let size = (matrix.len() as f64).sqrt() as usize;
 
-        (0..size).map(|col| {
-            determinant(matrix
-                .clone()
-                .into_iter()
-                .enumerate()
-                .filter(|(i, _)| 
-                    *i >= size 
-                    && i % size != col)
-                .map(|(_, v)| v)
-                .collect()
-            ) * (matrix.get(col).unwrap().clone())
-        })
-        .enumerate()
-        .reduce(|(_, acc), (i, v)| {(0, if let 0 = i % 2 {
-            acc + v
-        } else {
-            acc - v
-        })})
-        .map(|(_, v)| v)
-        .unwrap()
+        (0..size)
+            .map(|col| {
+                determinant(
+                    matrix
+                        .clone()
+                        .into_iter()
+                        .enumerate()
+                        .filter(|(i, _)| *i >= size && i % size != col)
+                        .map(|(_, v)| v)
+                        .collect(),
+                ) * (matrix.get(col).unwrap().clone())
+            })
+            .enumerate()
+            .reduce(|(_, acc), (i, v)| (0, if let 0 = i % 2 { acc + v } else { acc - v }))
+            .map(|(_, v)| v)
+            .unwrap()
     }
 }
 
 #[cfg(test)]
 mod test {
-    use crate::week5::{scalar::Scalar, vector::{unit::three_d::{i, j, k}, Vector}};
+    use crate::week5::{
+        scalar::Scalar,
+        vector::{
+            unit::three_d::{i, j, k},
+            Vector,
+        },
+    };
 
-    use super::{determinant, Value, cross};
+    use super::{cross, determinant, Value};
 
     #[test]
     fn basecase() {
-        assert_eq!(determinant(vec![
+        assert_eq!(
+            determinant(vec![Value::Scalar(Scalar(1.))]),
             Value::Scalar(Scalar(1.))
-        ]), Value::Scalar(Scalar(1.)))
+        )
     }
-    
+
     #[test]
     fn units() {
         assert_eq!(cross(vec![i(), j()]), Value::Vector(k()));
@@ -137,10 +146,11 @@ mod test {
     #[test]
     fn threedimensional() {
         assert_eq!(
-            cross(vec![Vector(vec![2.0, 1.0, 3.0]), Vector(vec![-1.0, 2.0, 2.0])]),
+            cross(vec![
+                Vector(vec![2.0, 1.0, 3.0]),
+                Vector(vec![-1.0, 2.0, 2.0])
+            ]),
             Value::Vector(Vector(vec![2.0, 1.0, 3.0]) ^ Vector(vec![-1.0, 2.0, 2.0]))
         )
     }
-
-
 }

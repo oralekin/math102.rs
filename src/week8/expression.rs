@@ -1,5 +1,5 @@
-use std::f64::EPSILON;
 use std::f64::consts::E;
+use std::f64::EPSILON;
 use std::fmt::{Debug, Display};
 use std::ops::{Add, BitXor, Div, Mul, Sub};
 
@@ -62,7 +62,6 @@ impl BitXor for Expression {
     type Output = Expression;
 
     fn bitxor(self, rhs: Self) -> Self::Output {
-        println!("{:?} to the {:?}", self, rhs);
         Expression::Exponentiate(Box::new(self), Box::new(rhs))
     }
 }
@@ -219,9 +218,7 @@ pub mod functions {
 
     pub fn sin(inside: &Expression) -> Expression {
         Expression::DerivableFunctionExpression(
-            DerivableFunction("sin".to_string(), |inside| {
-                    cos(&inside)
-            }),
+            DerivableFunction("sin".to_string(), |inside| cos(&inside)),
             Box::new(inside.clone()),
         )
     }
@@ -287,13 +284,9 @@ mod test {
 
     #[test]
     fn display() {
-        let ex: Expression = 
-            Expression::Constant(Scalar(1.)) 
-            / (
-                Expression::Constant(Scalar(1.)) - (
-                    Expression::Variable('x') ^ Expression::Constant(Scalar(2.))
-                )
-            );
+        let ex: Expression = Expression::Constant(Scalar(1.))
+            / (Expression::Constant(Scalar(1.))
+                - (Expression::Variable('x') ^ Expression::Constant(Scalar(2.))));
         println!("f(x)={}", ex);
     }
 
