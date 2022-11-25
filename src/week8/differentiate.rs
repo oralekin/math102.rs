@@ -1,6 +1,6 @@
 use crate::week5::scalar::Scalar;
 
-use super::expression::Expression;
+use super::expression::{Expression, DerivableFunction};
 
 #[derive(Debug)]
 struct BadDifferentiationError;
@@ -40,6 +40,7 @@ impl Differentiate for Expression {
                     }
                 }
                 Expression::Constant(Scalar(_)) => Expression::Constant(Scalar(0.)),
+                Expression::DerivableFunctionExpression(DerivableFunction(_, derivative), box inside) => derivative(inside.clone()) * inside.differentiate(wrt)?,
             }.simplified())
         } else {
             Err(BadDifferentiationError)
@@ -50,7 +51,7 @@ impl Differentiate for Expression {
 
 #[cfg(test)]
 mod test {
-    use crate::{week8::{expression::Expression, differentiate::Differentiate}, week5::scalar::Scalar};
+    use crate::{week8::{expression::{Expression, functions::{sin, cos}}, differentiate::Differentiate}, week5::scalar::Scalar};
 
     #[test]
     fn constant_coefficient() {
@@ -72,5 +73,17 @@ mod test {
             ).differentiate(&Expression::Variable('x')).unwrap(),
             (Expression::Constant(Scalar(5.)) * (Expression::Variable('x') ^ Expression::Constant(Scalar(4.)))).simplified()
         );
+    }
+
+    #[test]
+    fn trig() {
+        let x = Expression::Variable('x');
+        let ex =  x.clone() ^ Expression::Constant(Scalar(2.));
+        
+        let sin = sin(&ex);
+        let cos = cos(&ex);
+
+        println!("f(x)={}\nf'(x)={}\nf''(x)={}\n", sin, sin.differentiate(&x).unwrap(), cos.differentiate(&x).unwrap().differentiate(&x).unwrap());
+        println!("f(x)={}\nf'(x)={}\nf''(x)={}\n", cos, cos.differentiate(&x).unwrap(), cos.differentiate(&x).unwrap().differentiate(&x).unwrap());
     }
 } 
