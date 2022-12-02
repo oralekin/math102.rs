@@ -117,7 +117,7 @@ impl Expression {
             ) => Expression::Constant(Scalar(lhs + rhs)),
             Expression::Add(box Expression::Constant(Scalar(zero)), v)
             | Expression::Add(v, box Expression::Constant(Scalar(zero)))
-                if zero.abs() <= f64::EPSILON =>
+                if zero.abs() <= EPSILON =>
             {
                 *v
             }
@@ -127,20 +127,20 @@ impl Expression {
                 box Expression::Constant(Scalar(rhs)),
             ) => Expression::Constant(Scalar(lhs - rhs)),
             Expression::Subtract(v, box Expression::Constant(Scalar(zero)))
-                if zero.abs() <= f64::EPSILON =>
+                if zero.abs() <= EPSILON =>
             {
                 *v
             }
 
             Expression::Multiply(box Expression::Constant(Scalar(zero)), _)
             | Expression::Multiply(_, box Expression::Constant(Scalar(zero)))
-                if zero.abs() <= f64::EPSILON =>
+                if zero.abs() <= EPSILON =>
             {
                 Expression::Constant(Scalar(0.))
             }
             Expression::Multiply(box Expression::Constant(Scalar(one)), other)
             | Expression::Multiply(other, box Expression::Constant(Scalar(one)))
-                if (1. - one).abs() <= f64::EPSILON =>
+                if (1. - one).abs() <= EPSILON =>
             {
                 *other
             }
@@ -150,7 +150,7 @@ impl Expression {
             ) => Expression::Constant(Scalar(lhs * rhs)),
             // Expression::Multiply(_, _) => todo!(),
             Expression::Divide(other, box Expression::Constant(Scalar(one)))
-                if (1. - one).abs() <= f64::EPSILON =>
+                if (1. - one).abs() <= EPSILON =>
             {
                 *other
             }
@@ -160,21 +160,47 @@ impl Expression {
                 box Expression::Constant(Scalar(rhs)),
             ) => Expression::Constant(Scalar(lhs / rhs)),
             // Expression::Divide(_, _) => todo!(),
-            Expression::Exponentiate(box Expression::Constant(Scalar(one)), other)
-            | Expression::Exponentiate(other, box Expression::Constant(Scalar(one)))
-                if (1. - one).abs() <= f64::EPSILON =>
-            {
-                *other
-            }
-
-            Expression::Exponentiate(box Expression::Constant(Scalar(zero)), _)
-            | Expression::Exponentiate(_, box Expression::Constant(Scalar(zero)))
-                if zero.abs() <= f64::EPSILON =>
+            
+            // 1^a
+            Expression::Exponentiate(box Expression::Constant(Scalar(one)), _)
+                if (1. - one).abs() <= EPSILON =>
             {
                 Expression::Constant(Scalar(1.))
             }
 
+            // a^1
+            Expression::Exponentiate(other, box Expression::Constant(Scalar(one)))
+                if (1. - one).abs() <= EPSILON =>
+            {
+                *other
+            }
+
+            // 0^a
+            Expression::Exponentiate(box Expression::Constant(Scalar(zero)), _)
+                if zero.abs() <= EPSILON =>
+            {
+                Expression::Constant(Scalar(0.))
+            }
+
+            // a^0
+            Expression::Exponentiate(_, box Expression::Constant(Scalar(zero)))
+                if zero.abs() <= EPSILON =>
+            {
+                Expression::Constant(Scalar(1.))
+            }
+
+            // a^b
+            Expression::Exponentiate(
+                box Expression::Constant(Scalar(base)),
+                box Expression::Constant(Scalar(power)),
+            ) => Expression::Constant(Scalar(base.powf(power))),
             // Expression::Exponentiate(_, _) => todo!(),
+
+            
+            Expression::Logarithm(
+                box Expression::Constant(Scalar(base)),
+                box Expression::Constant(Scalar(inside)),
+            ) => Expression::Constant(Scalar(inside.log(base))),
             // Expression::Logarithm(_, _) => todo!(),
             other => other,
         }
@@ -279,6 +305,19 @@ mod test {
         let seven2 = Expression::Constant(Scalar(7.));
 
         assert_eq!(((x * zero) + seven1).simplified(), seven2);
+
+        let x = Expression::Variable('x');
+        let zero = Expression::Constant(Scalar(0.));
+        let seven = Expression::Constant(Scalar(7.));
+        let eight = Expression::Constant(Scalar(8.));
+
+        assert_eq!(((x ^ zero) + seven).simplified(), eight);
+
+        let x1 = Expression::Variable('x');
+        let x2 = Expression::Variable('x');
+        let one = Expression::Constant(Scalar(1.));
+
+        assert_eq!((x1 ^ one).simplified(), x2);
     }
 
     #[test]
