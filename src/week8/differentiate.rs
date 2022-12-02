@@ -3,8 +3,8 @@ use crate::week5::scalar::Scalar;
 use super::expression::{DerivableFunction, Expression};
 
 #[derive(Debug)]
-struct BadDifferentiationError;
-trait Differentiate {
+pub struct BadDifferentiationError;
+pub trait Differentiate {
     fn differentiate(&self, wrt: &Expression) -> Result<Expression, BadDifferentiationError>;
 }
 
